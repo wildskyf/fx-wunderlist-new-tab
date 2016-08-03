@@ -1,0 +1,18 @@
+{
+  "title": "Wunderlist New Tab",
+  "name": "wlisttab",
+  "version": "0.0.1",
+  "description":
+  	"This addon would replace your boring new-tab page to a good-designed wunderlist page.",
+  "main": "index.js",
+  "author": "wildskyf",
+  "engines": {
+    "firefox": ">=40.0a1"
+  },
+  "permissions": {
+    "multiprocess": true
+  },
+  "keywords": [
+    "wnderlist", "to-do list", "new-tab"
+  ]
+}
