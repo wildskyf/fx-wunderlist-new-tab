@@ -1,0 +1,68 @@
+body,html {
+	background: url("resource://wlisttab/backgrounds/bg.jpg");
+	background-size: cover;
+	min-height: 100vh;
+	margin: 0;
+	padding: 0;
+	width: 100vw;
+}
+
+#header {
+	height: 3rem;
+	padding: .5rem;
+}
+
+#main {
+	text-align: center;
+	width: 100%;
+
+	#container {
+		margin: 0 auto;
+		padding: 3rem 0;
+		width: 50%;
+		max-width: 550px;
+
+		#newtask {
+			height: 3rem;
+			padding-bottom: 2rem;
+
+			input {
+				background: rgba(0,0,0,0);
+				border: none;
+				border-bottom: 3px solid #fff;
+				color: #fff;
+				font-size: 2rem;
+				line-height: 2.5rem;
+				width: 100%;
+			}
+		}
+
+		#tasklist {
+			ul {
+				list-style-type: none;
+				padding: 0;
+
+				li {
+					border-bottom: 1px solid #fff;
+					height: 2.5rem;
+					padding: .25rem 0;
+					margin-bottom: 1rem;
+
+					div {
+						color: #fff;
+						font-size: 1.5rem;
+						font-weight: 400;
+						font-smooth: antialiased;
+						text-align: left;
+
+						&:hover {
+							text-decoration: line-through;
+
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
