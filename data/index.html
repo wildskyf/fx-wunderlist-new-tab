@@ -4,24 +4,24 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>New Tab</title>
 	<link rel="stylesheet" href="resource://wlisttab/data/style.css" type="text/css" media="screen" charset="utf-8">
-	<script type="text/javascript" charset="utf-8" src="resource://wlisttab/data/wlist.js"></script>
+	<script type="text/javascript" charset="utf-8" src="resource://wlisttab/data/js/vendor/wunderlist.sdk.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="resource://wlisttab/data/js/config.js"></script>
+	<script type="text/javascript" charset="utf-8" src="resource://wlisttab/data/js/wlist.js"></script>
 </head>
 <body>
-	<div id="header"></div>
-	<div id="main">
-		<div id="container">
-			<div id="newtask">
-				<input type="text" placeholder="Create new task...">
-			</div>
-			<div id="tasklist">
-				<ul>
-					<li>
-						<div>js 有外層，是要傳？還是直接用？</div>
-					</li>
-					<li>
-						<div>buy something interesting</div>
-					</li>
-				</ul>
+	<div id="app">
+		<div id="header"></div>
+		<div id="main">
+			<div id="container">
+				<div id="newtask">
+					<select id="lists_list"></select>
+					<input type="text" placeholder="Create new task...">
+				</div>
+				<div id="tasklist">
+					<ul>
+						<li><div>Loading...</div></li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>

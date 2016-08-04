@@ -1,3 +1,4 @@
 ref
 *.map
 .sass-cache
+**/config.js
