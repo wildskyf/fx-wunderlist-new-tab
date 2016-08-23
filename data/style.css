@@ -7,20 +7,36 @@ body, html {
 
 #app {
   background: rgba(0, 0, 0, 0.25);
-  min-height: 100vh; }
+  min-height: 100vh;
+  padding-bottom: 7rem; }
 
 #header {
   height: 3rem;
-  padding: .5rem; }
+  padding: .5rem 1%;
+  position: fixed;
+  top: 0;
+  width: 98%; }
+  #header img {
+    border: 2px solid white;
+    border-radius: 50%;
+    color: white;
+    float: right;
+    height: 68px;
+    width: 68px; }
 
 #main {
   text-align: center;
   width: 100%; }
   #main #container {
     margin: 0 auto;
-    padding: 3rem 0;
     width: 50%;
-    max-width: 550px; }
+    max-width: 550px;
+    position: relative;
+    top: 7rem; }
+    #main #container #hello {
+      color: #fff;
+      font-size: 1.25rem;
+      text-align: left; }
     #main #container #newtask {
       height: 3rem;
       padding-bottom: 2rem; }

@@ -10,6 +10,7 @@
     "firefox": ">=40.0a1"
   },
   "permissions": {
+    "cross-domain-content": ["https://avatars.wunderlist.io/", "https://a.wunderlist.com/"],
     "multiprocess": true
   },
   "keywords": [
