@@ -68,6 +68,9 @@ body, html {
           font-smooth: antialiased;
           text-align: left;
           text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1); }
+          #main #container #tasklist ul li div.done {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: line-through; }
           #main #container #tasklist ul li div:hover {
             text-decoration: line-through;
             cursor: pointer; }

@@ -9,20 +9,36 @@ let addTask = taskData =>
 	wlAPI.http.tasks.create(taskData)
 		.done( task => {
 			let parser = new DOMParser();
-			let newTaskDoc = parser.parseFromString(`
-				<li class="task" data-task-id="${task.id}"><div>${task.title}</div></li>`, "text/html");
+			let newTask = parser.parseFromString(`
+				<li class="task" data-task-id="${task.id}"><div>${task.title}</div></li>`, "text/html")
+				.querySelector('li.task');
 
-			_('#tasklist > ul').insertBefore(newTaskDoc.querySelector('li.task'), _('.task'));
+			_('#tasklist > ul').insertBefore(newTask, _('.task'));
 			_('#newtask-title').value = "";
+
+			_(`li.task[data-task-id="${task.id}"]`).addEventListener('click', e => toggleTaskDone(parseInt(e.target.parentNode.dataset.taskId)), false);
 		}).fail( e => console.error(e.stack) );
+
+let toggleTaskDone = taskId =>
+	wlAPI.http.tasks.getID(taskId)
+		.done( task =>
+			wlAPI.http.tasks.update(taskId, task.revision, { "completed": !task.completed })
+				.done( task => _(`li[data-task-id="${task.id}"] > div`).classList.toggle('done'))
+				.fail( e => console.error(e) )
+		).fail( e => console.error(e) );
 
 let renderTaskList = (tasksDat, listId) => {
 	let list_content = '';
 	tasksDat.reverse().forEach( task => {
 		list_content += `<li class="task" data-task-id="${task.id}"><div>${task.title}</div></li>`;
 	});
+
 	_('#tasklist > ul').innerHTML = list_content;
 	_('#tasklist').dataset["listId"] = listId;
+
+	Array.from(document.querySelectorAll('#tasklist li')).forEach( taskLi => {
+		taskLi.addEventListener('click', e => toggleTaskDone(parseInt(e.target.parentNode.dataset.taskId)), false);
+	});
 };
 
 let renderListList = listsDat => {
@@ -40,21 +56,19 @@ let renderListList = listsDat => {
 
 // ================
 
-let initListAndMenu = () => {
+let initListAndMenu = () =>
 	wlAPI.http.lists.all()
 		.done( listsDat => {
 			renderListList(listsDat);
 			updateList(listsDat[0].id); // init Task List
 		}).fail( e => console.error(e.stack) );
-};
 
-let initUserInfo = () => {
+let initUserInfo = () =>
 	wlAPI.http.user.all()
 		.done(user => {
 			_("#header").innerHTML = `<img src="http://a.wunderlist.com/api/v1/avatar?user_id=${user.id}" alt="user avatar" />`;
 			_("#hello").innerHTML = `Hi, ${user.name}, what are you doing today?`;
 		}).fail( e => console.error(e.stack) );
-};
 
 let initInputBox = () =>
 	_('#newtask-title').addEventListener('keydown', event => {
@@ -65,11 +79,10 @@ let initInputBox = () =>
 			});
 	}, false);
 
-window.onload = () => {
+window.onload = () =>
 	wlAPI.initialized.done( () => {
 		initListAndMenu();
 		initUserInfo();
 		initInputBox();
 	});
-};
 
