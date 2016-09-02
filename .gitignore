@@ -1,5 +1,6 @@
 ref
 *.map
 *.swp
+*.css
 .sass-cache
 **/config.js

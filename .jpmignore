@@ -1,0 +1,11 @@
+ref
+.gitignore
+.git
+.jpmignore
+*.map
+*.swp
+*.scss
+.sass-cache
+*.zip
+*.xpi
+
