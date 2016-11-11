@@ -1,7 +1,7 @@
 {
   "title": "Wunderlist New Tab",
   "name": "wlisttab",
-  "version": "0.0.1",
+  "version": "1.0",
   "description":
   	"This addon would replace your boring new-tab page to a good-designed wunderlist page.",
   "main": "index.js",

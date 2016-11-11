@@ -3,4 +3,3 @@ ref
 *.swp
 *.css
 .sass-cache
-**/config.js
