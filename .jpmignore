@@ -1,4 +1,7 @@
+.DS_Store
+*/.DS_Store
 ref
+.editorconfig
 .gitignore
 .git
 .jpmignore
@@ -8,4 +11,5 @@ ref
 .sass-cache
 *.zip
 *.xpi
+*~
 
