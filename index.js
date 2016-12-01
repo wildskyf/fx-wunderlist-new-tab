@@ -90,6 +90,7 @@ exports.main = () => {
 	login();
 	NewTabURL.override("resource://wlisttab/data/index.html");
 	
+	// Change the new tab page. Should tell users in addon description field in AMO.
 	tabs.on('open', tab => {
 		if (tab.url === 'about:blank') {
 			worker = tab.attach({
@@ -97,9 +98,9 @@ exports.main = () => {
 			});
 		}
 	});
-}
+};
 
 exports.onUnload = () => {
 	NewTabURL.override(origin_default_tab);
-}
+};
 
