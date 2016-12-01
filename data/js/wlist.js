@@ -69,8 +69,14 @@ window.onload = () => {
 		let initUserInfo = () =>
 			wlAPI.http.user.all()
 				.done(user => {
-					_("#header").innerHTML = `<img src="http://a.wunderlist.com/api/v1/avatar?user_id=${user.id}" alt="user avatar" />`;
-					_("#hello").innerHTML = `Hi, ${user.name}, what are you doing today?`;
+					var avatar = document.createElement("IMG");
+					avatar.src = `http://a.wunderlist.com/api/v1/avatar?user_id=${user.id}`;
+					avatar.alt = `user's avatar`;
+					_("#header").appendChild(avatar);
+
+					var caring = document.createTextNode(`Hi, ${user.name}, what are you doing today?`);
+					_("#hello").appendChild(caring);
+
 				}).fail( e => console.error(e.stack) );
 
 		let initInputBox = () =>
@@ -88,5 +94,5 @@ window.onload = () => {
 			initInputBox();
 		});
 	});
-}
+};
 
