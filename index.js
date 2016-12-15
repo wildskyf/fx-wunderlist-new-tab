@@ -1,13 +1,40 @@
-const {NewTabURL} = require('resource:///modules/NewTabURL.jsm');
-const {storage} = require("sdk/simple-storage");
-const tabs = require("sdk/tabs");
-const prefs = require("sdk/simple-prefs");
-const origin_default_tab = NewTabURL.get();
-
 // CONFIG VARS : from wunderlist addon in AMO
 const authBaseUrl = 'https://www.wunderlist.com/oauth/authorize';
 const clientID    = 'b2638c45ac73d8a10bd7'; // todo get firefox unique
 const redirectURI = 'https://a.wunderlist.com/api/health';
+
+var local = browser.storage.local;
+var wAccessToken = null;
+
+local.get().then( data => {
+	if(data.token)
+		wAccessToken = data.token;
+	else
+		login();
+});
+
+// for Access request from f2e
+function getToken() {
+	return wAccessToken;
+}
+
+browser.tabs.onCreated.addListener( tab => {
+	local.get().then( data => {
+		wAccessToken = data.token;
+		if(data.token && tab.url == "about:newtab") {
+			/*
+			browser.tabs.update(
+				tab.id,
+				{ url:"data/index.html" }
+			)
+			*/
+			browser.tabs.remove(tab.id);
+			browser.tabs.create({
+				url:"data/index.html"
+			});
+		}
+	});
+});
 
 var globalObjects = {
     'addPanel': undefined,
@@ -15,18 +42,6 @@ var globalObjects = {
 };
 
 // LOGIN URL composs
-function onTokenSet(token) {
-    var addPanel = globalObjects.addPanel;
-    console.log('token set', storage.token);
-    addPanel && addPanel.port.emit('token', storage.token);
-}
- 
-function onLoginFailed(err) {
-    var addPanel = globalObjects.addPanel;
-    console.error('login failed:', err && err.message, err);
-    addPanel && addPanel.port.emit('token', storage.token);
-}
- 
 function authParams(state) {
     return {
         'client_id': clientID,
@@ -34,73 +49,44 @@ function authParams(state) {
         'redirect_uri': redirectURI
     };
 }
- 
-function getAuthUrl(state) {
-    var url = authBaseUrl;
-    var params = authParams(state);
- 
-    Object.keys(params)
-        .forEach(function(key, index) {
- 
-            url += (index === 0 ? '?' : '&') + key + '=' + params[key];
-        });
- 
-    return url;
-}
 
 function login(success, failure) {
+
+	var getAuthUrl = state => {
+		var url = authBaseUrl;
+		var params = authParams(state);
+
+		Object.keys(params)
+			.forEach(function(key, index) {
+				url += (index === 0 ? '?' : '&') + key + '=' + params[key];
+			});
+
+		return url;
+	};
+
     // Open a new tab as an app tab and do something once it's open.
-    tabs.open({
-        'url': getAuthUrl('foxmosa'),
-        'onOpen': function onOpen(tab) {
- 
-            tab.on('ready', function(tab) {
- 
-                var url = tab.url;
-                console.log('tab url', url);
-                if (url.indexOf(redirectURI) === 0) {
-                    var respParts = url && url.split(/\#access_token\=/);
-                    var token = respParts && respParts[1];
- 
-                    if (token) {
-                        storage.token = token;
-                        success && success();
-                        onTokenSet();
-                    } else {
-                        delete storage.token;
-                        failure && failure();
-                        onLoginFailed();
-                    }
- 
-                    tab.close();
-                }
-            });
-        }
+    var loginPage = browser.windows.create({
+        'url': getAuthUrl('foxmosa')
+    }).then( () => {
+		var getTokenHandler = (tabId, changeInfo, tabInfo) => {
+			if ( /^https\:\/\/a\.wunderlist.com\/api\/health/.test(tabInfo.url)) {
+				var url = tabInfo.url;
+				console.log('tab url', url);
+				var respParts = url && url.split(/\#access_token\=/);
+				var token = respParts && respParts[1];
+
+				if (token) {
+					local.set({'token': token});
+					success && success();
+				} else {
+					local.remove('token');
+					failure && failure();
+				}
+				browser.tabs.remove(tabId);
+				browser.tabs.onUpdated.removeListener(getTokenHandler);
+			}
+		};
+		browser.tabs.onUpdated.addListener(getTokenHandler);
     });
 }
- 
-// PREFERENCES
-prefs.on('logout', function() {
-    delete storage.token;
-    delete storage.lastUsedListID;
-    console.log('logout clicked');
-});
-
-exports.main = () => {
-	login();
-	NewTabURL.override("resource://wlisttab/data/index.html");
-	
-	// Change the new tab page. Should tell users in addon description field in AMO.
-	tabs.on('open', tab => {
-		if (tab.url === 'about:blank') {
-			worker = tab.attach({
-				contentScript: `unsafeWindow.wAccessToken = '${storage.token}';`
-			});
-		}
-	});
-};
-
-exports.onUnload = () => {
-	NewTabURL.override(origin_default_tab);
-};
 

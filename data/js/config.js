@@ -1,3 +1,7 @@
+browser.runtime.getBackgroundPage().then(page => {
+	window.wAccessToken = page.getToken();
+});
+
 var waitWACT = new Promise( done => {
 	var counting = window.setInterval( () => {
 		if (wAccessToken) {
@@ -6,7 +10,7 @@ var waitWACT = new Promise( done => {
 		}
 	}, 100);
 });
-	
+
 var wlAPI = null;
 var initWL = new Promise( done => {
 	waitWACT.then( () => {
