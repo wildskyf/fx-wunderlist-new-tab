@@ -68,7 +68,7 @@ window.onload = () => {
 
 		let initUserInfo = () =>
 			wlAPI.http.user.all()
-				.done(user => {
+				.done( user => {
 					var avatar = document.createElement("IMG");
 					avatar.src = `http://a.wunderlist.com/api/v1/avatar?user_id=${user.id}`;
 					avatar.alt = `user's avatar`;
@@ -88,8 +88,42 @@ window.onload = () => {
 					});
 			}, false);
 
+		let initUserConfig = () => {
+			if (localStorage.setting) {
+				var bgID = JSON.parse(localStorage.setting).background;
+				document.querySelectorAll('html,body')
+						.forEach( target => {
+							target.style.backgroundImage = `url("/backgrounds/${bgID.substr(12)}.jpg")`;
+						});
+				// FIXME: if user change setting, this local setting won't change
+			}
+			else {
+				wlAPI.http.settings.all()
+					.done( settings => {
+						setting_obj = {};
+						settings.forEach( setting => {
+							setting_obj[setting.key] = setting.value;
+							switch (setting.key) {
+								case 'background':
+									document.querySelectorAll('html,body')
+											.forEach( target => {
+												target.style.backgroundImage = `url("/backgrounds/${setting.value.substr(12)}.jpg")`;
+											});
+									break;
+								case 'account_locale':
+									break;
+								default:
+									break;
+							}
+						});
+						localStorage.setting = JSON.stringify(setting_obj);
+					});
+			}
+		};
+
 		wlAPI.initialized.done( () => {
 			initListAndMenu();
+			initUserConfig();
 			initUserInfo();
 			initInputBox();
 		});
