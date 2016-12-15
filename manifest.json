@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Wunderlist New Tab",
-  "version": "2.0.0",
+  "version": "2.0.1",
 
   "description":
   	"This addon would replace your boring new-tab page to a good-designed wunderlist page.",
@@ -10,7 +10,10 @@
     "48": "icons/border-48.png"
   },
 
-  "permissions": ["*://a.wunderlist.com/*","tabs","storage"],
+  "permissions": [
+  	  "*://a.wunderlist.com/*", "*://socket.wunderlist.com:8443/*",
+  	  "tabs", "storage"
+  ],
 
   "background": {
   	"scripts": ["index.js"]
