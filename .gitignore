@@ -4,3 +4,4 @@ ref
 *.css
 .sass-cache
 *.xpi
+.web-extension-id
