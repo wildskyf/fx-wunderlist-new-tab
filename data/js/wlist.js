@@ -74,6 +74,19 @@ window.onload = () => {
 					avatar.alt = `user's avatar`;
 					_("#header").appendChild(avatar);
 
+					var logout_btn = document.createElement("span");
+					logout_btn.id = 'logout_btn';
+					var logout_text = document.createTextNode(`logout`);
+					logout_btn.appendChild(logout_text);
+					_("#header").appendChild(logout_btn);
+
+					logout_btn.addEventListener('click', event => {
+						browser.runtime.getBackgroundPage().then(page => {
+							page.removeToken();
+							browser.tabs.getCurrent().then( tab => browser.tabs.remove( tab.id ) );
+						});
+					});
+
 					var caring = document.createTextNode(`Hi, ${user.name}, what are you doing today?`);
 					_("#hello").appendChild(caring);
 

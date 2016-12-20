@@ -18,10 +18,25 @@ function getToken() {
 	return wAccessToken;
 }
 
-browser.tabs.onCreated.addListener( tab => {
+function removeToken() {
+	local.remove('token');
+	wAccessToken = null;
+    var loginPage = browser.tabs.create({
+        'url': 'https://www.wunderlist.com/logout'
+    }).then( () => {
+		var logoutHandler = (tabId, changeInfo, tabInfo) => {
+			if (tabInfo.url == 'https://www.wunderlist.com/download/') {
+				browser.tabs.remove(tabId);
+				browser.tabs.onUpdated.removeListener(logoutHandler);
+			}
+		};
+		browser.tabs.onUpdated.addListener(logoutHandler);
+    });
+}
+
+var replaceNewTabPage = tab => {
 	local.get().then( data => {
-		wAccessToken = data.token;
-		if(data.token && tab.url == "about:newtab") {
+		if (tab.url == "about:newtab") {
 			/*
 			browser.tabs.update(
 				tab.id,
@@ -29,12 +44,19 @@ browser.tabs.onCreated.addListener( tab => {
 			)
 			*/
 			browser.tabs.remove(tab.id);
-			browser.tabs.create({
-				url:"data/index.html"
-			});
+			if (data.token) {
+				browser.tabs.create({
+					url:"data/index.html"
+				});
+			}
+			else {
+				login();
+			}
 		}
 	});
-});
+};
+
+browser.tabs.onCreated.addListener(replaceNewTabPage);
 
 var globalObjects = {
     'addPanel': undefined,
@@ -65,7 +87,7 @@ function login(success, failure) {
 	};
 
     // Open a new tab as an app tab and do something once it's open.
-    var loginPage = browser.windows.create({
+    var loginPage = browser.tabs.create({
         'url': getAuthUrl('foxmosa')
     }).then( () => {
 		var getTokenHandler = (tabId, changeInfo, tabInfo) => {
@@ -77,12 +99,15 @@ function login(success, failure) {
 
 				if (token) {
 					local.set({'token': token});
-					success && success();
+					// success && success();
+					wAccessToken = token;
+					browser.tabs.update(tabId, {
+						url:"data/index.html"
+					});
 				} else {
 					local.remove('token');
-					failure && failure();
+					// failure && failure();
 				}
-				browser.tabs.remove(tabId);
 				browser.tabs.onUpdated.removeListener(getTokenHandler);
 			}
 		};

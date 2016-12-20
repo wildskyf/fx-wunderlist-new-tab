@@ -27,6 +27,19 @@ body,html {
 		height: 68px;
 		width: 68px;
 	}
+
+	#logout_btn {
+		clear: both;
+		color: #fff;
+		cursor: pointer;
+		float: right;
+		font-weight: 100;
+		padding: .5rem 1rem;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 }
 
 #main {
