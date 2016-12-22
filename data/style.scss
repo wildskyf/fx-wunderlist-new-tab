@@ -29,12 +29,15 @@ body,html {
 	}
 
 	#logout_btn {
+		box-sizing: border-box;
 		clear: both;
 		color: #fff;
 		cursor: pointer;
 		float: right;
 		font-weight: 100;
 		padding: .5rem 1rem;
+		text-align: center;
+		width: 72px;
 
 		&:hover {
 			text-decoration: underline;
@@ -74,7 +77,7 @@ body,html {
 			}
 
 			#lists_list {
-			    float: right;
+				float: right;
 				opacity: .8;
 				position: relative;
 				top: 2rem;
@@ -85,6 +88,24 @@ body,html {
 			ul {
 				list-style-type: none;
 				padding: 0;
+
+				&.loading:before {
+					position: absolute;
+					left: 50%;
+					margin-left: -12px;
+					margin-top: 12px;
+					display: block;
+					content: '';
+					cursor: wait;
+					border-radius: 24px;
+					border: 2px solid rgba(255,255,255,0.9);
+					border-top: 2px solid rgba(0,0,0,0);
+					border-left: 2px solid rgba(0,0,0,0);
+					width: 24px;
+					height: 24px;
+					animation: loading .4s infinite linear;
+				}
+
 
 				li {
 					border-bottom: 1px solid #fff;
@@ -116,3 +137,7 @@ body,html {
 	}
 }
 
+@keyframes loading {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}

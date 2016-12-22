@@ -1,4 +1,5 @@
 let _ = dom => document.querySelector(dom);
+var l10nCode = null;
 
 window.onload = () => {
 	initWL.then( () => {
@@ -36,6 +37,7 @@ window.onload = () => {
 				list_content += `<li class="task" data-task-id="${task.id}"><div>${task.title}</div></li>`;
 			});
 
+			_('#tasklist > ul').classList.remove('loading');
 			_('#tasklist > ul').innerHTML = list_content;
 			_('#tasklist').dataset["listId"] = listId;
 
@@ -48,11 +50,16 @@ window.onload = () => {
 			let listsSelect = _("#lists_list");
 
 			listsDat.forEach( list => {
+				if (list.list_type == 'inbox')
+					list.title = langData[l10nCode].smart_list_inbox;
+				else if (list.list_type == 'today')
+					list.title = langData[l10nCode].smart_list_today;
 				listsSelect.innerHTML += `<option value="${list.id}">${list.title}</option>`;
 			});
 
 			listsSelect.addEventListener('change', () => {
-				_('#tasklist > ul').innerHTML = `<li><div>Loading...</div></li>`;
+				_('#tasklist > ul').classList.add('loading');
+				_('#tasklist > ul').innerHTML = '';
 				updateList(listsSelect.value);
 			});
 		};
@@ -76,7 +83,7 @@ window.onload = () => {
 
 					var logout_btn = document.createElement("span");
 					logout_btn.id = 'logout_btn';
-					var logout_text = document.createTextNode(`logout`);
+					var logout_text = document.createTextNode(langData[l10nCode].button_log_out);
 					logout_btn.appendChild(logout_text);
 					_("#header").appendChild(logout_btn);
 
@@ -88,12 +95,13 @@ window.onload = () => {
 						});
 					});
 
-					var caring = document.createTextNode(`Hi, ${user.name}, what are you doing today?`);
+					var caring = document.createTextNode(langData[l10nCode].label_new_tab_task_input_$.replace('%@', user.name));
 					_("#hello").appendChild(caring);
 
 				}).fail( e => console.error(e.stack) );
 
-		let initInputBox = () =>
+		let initInputBox = () => {
+			_('#newtask-title').placeholder = langData[l10nCode].placeholder_add_task_mobile;
 			_('#newtask-title').addEventListener('keydown', event => {
 				if(event.keyCode == 13) // when click enter
 					addTask({
@@ -101,46 +109,55 @@ window.onload = () => {
 						'title': _('#newtask-title').value
 					});
 			}, false);
+		};
 
 		let initUserConfig = () => {
-			if (localStorage.setting) {
-				var bgID = JSON.parse(localStorage.setting).background;
-				document.querySelectorAll('html,body')
-						.forEach( target => {
-							target.style.backgroundImage = `url("/backgrounds/${bgID.substr(12)}.jpg")`;
+
+			return new Promise( (resolve, reject) => {
+				if (localStorage.setting) {
+					var settings = JSON.parse(localStorage.setting);
+					var bgID = settings.background;
+					document.querySelectorAll('html,body')
+							.forEach( target => {
+								target.style.backgroundImage = `url("/backgrounds/${bgID.substr(12)}.jpg")`;
+							});
+					l10nCode = settings.account_locale;
+					resolve();
+					// FIXME: if user change setting, this local setting won't change
+				}
+				else {
+					wlAPI.http.settings.all()
+						.done( settings => {
+							setting_obj = {};
+							settings.forEach( setting => {
+								setting_obj[setting.key] = setting.value;
+								switch (setting.key) {
+									case 'background':
+										document.querySelectorAll('html,body')
+												.forEach( target => {
+													target.style.backgroundImage = `url("/backgrounds/${setting.value.substr(12)}.jpg")`;
+												});
+										break;
+									case 'account_locale':
+										l10nCode = setting.value;
+										break;
+									default:
+										break;
+								}
+							});
+							localStorage.setting = JSON.stringify(setting_obj);
+							resolve();
 						});
-				// FIXME: if user change setting, this local setting won't change
-			}
-			else {
-				wlAPI.http.settings.all()
-					.done( settings => {
-						setting_obj = {};
-						settings.forEach( setting => {
-							setting_obj[setting.key] = setting.value;
-							switch (setting.key) {
-								case 'background':
-									document.querySelectorAll('html,body')
-											.forEach( target => {
-												target.style.backgroundImage = `url("/backgrounds/${setting.value.substr(12)}.jpg")`;
-											});
-									break;
-								case 'account_locale':
-									break;
-								default:
-									break;
-							}
-						});
-						localStorage.setting = JSON.stringify(setting_obj);
-					});
-			}
+				}
+			});
 		};
 
 		wlAPI.initialized.done( () => {
-			initListAndMenu();
-			initUserConfig();
-			initUserInfo();
-			initInputBox();
+			initUserConfig().then( () => {
+				initListAndMenu();
+				initUserInfo();
+				initInputBox();
+			});
 		});
 	});
 };
-
