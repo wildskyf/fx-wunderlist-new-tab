@@ -83,6 +83,7 @@ window.onload = () => {
 					logout_btn.addEventListener('click', event => {
 						browser.runtime.getBackgroundPage().then(page => {
 							page.removeToken();
+							delete localStorage.setting;
 							browser.tabs.getCurrent().then( tab => browser.tabs.remove( tab.id ) );
 						});
 					});
