@@ -1,5 +1,6 @@
 let _ = dom => document.querySelector(dom);
 var l10nCode = null;
+var escapeHTML = str => str.replace(/[&"'<>]/g, (m) => ({ "&": "&amp;", '"': "&quot;", "'": "&#39;", "<": "&lt;", ">": "&gt;" })[m]);
 
 window.onload = () => {
 	initWL.then( () => {
@@ -13,8 +14,11 @@ window.onload = () => {
 			wlAPI.http.tasks.create(taskData)
 				.done( task => {
 					let parser = new DOMParser();
+					let task_id = escapeHTML(task.id);
+					let task_title = escapeHTML(task.title);
+
 					let newTask = parser.parseFromString(`
-						<li class="task" data-task-id="${task.id}"><div>${task.title}</div></li>`, "text/html")
+						<li class="task" data-task-id="${task_id}"><div>${task_title}</div></li>`, "text/html")
 						.querySelector('li.task');
 
 					_('#tasklist > ul').insertBefore(newTask, _('.task'));
@@ -34,7 +38,9 @@ window.onload = () => {
 		let renderTaskList = (tasksDat, listId) => {
 			let list_content = '';
 			tasksDat.reverse().forEach( task => {
-				list_content += `<li class="task" data-task-id="${task.id}"><div>${task.title}</div></li>`;
+				let task_id = escapeHTML(task.id);
+				let task_title = escapeHTML(task.title);
+				list_content += `<li class="task" data-task-id="${task_id}"><div>${task_title}</div></li>`;
 			});
 
 			_('#tasklist > ul').classList.remove('loading');
@@ -50,6 +56,8 @@ window.onload = () => {
 			let listsSelect = _("#lists_list");
 
 			listsDat.forEach( list => {
+				let list_id = escapeHTML(list.id);
+				let list_title = escapeHTML(list.title);
 				if (list.list_type == 'inbox')
 					list.title = langData[l10nCode].smart_list_inbox;
 				else if (list.list_type == 'today')
