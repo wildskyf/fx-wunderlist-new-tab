@@ -1,6 +1,6 @@
 let _ = dom => document.querySelector(dom);
 var l10nCode = null;
-var escapeHTML = str => str.replace(/[&"'<>]/g, (m) => ({ "&": "&amp;", '"': "&quot;", "'": "&#39;", "<": "&lt;", ">": "&gt;" })[m]);
+var escapeHTML = str => str.toString().replace(/[&"'<>]/g, (m) => ({ "&": "&amp;", '"': "&quot;", "'": "&#39;", "<": "&lt;", ">": "&gt;" })[m]);
 
 window.onload = () => {
 	initWL.then( () => {
@@ -57,12 +57,12 @@ window.onload = () => {
 
 			listsDat.forEach( list => {
 				let list_id = escapeHTML(list.id);
-				let list_title = escapeHTML(list.title);
 				if (list.list_type == 'inbox')
 					list.title = langData[l10nCode].smart_list_inbox;
 				else if (list.list_type == 'today')
 					list.title = langData[l10nCode].smart_list_today;
-				listsSelect.innerHTML += `<option value="${list.id}">${list.title}</option>`;
+				list.title = escapeHTML(list.title);
+				listsSelect.innerHTML += `<option value="${list_id}">${list.title}</option>`;
 			});
 
 			listsSelect.addEventListener('change', () => {
