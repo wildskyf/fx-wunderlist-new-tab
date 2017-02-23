@@ -1,4 +1,69 @@
 !function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var n;"undefined"!=typeof window?n=window:"undefined"!=typeof global?n=global:"undefined"!=typeof self&&(n=self),(n.wunderlist||(n.wunderlist={})).sdk=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],2:[function(_dereq_,module,exports){
 (function (process,global){
 'use strict';
 
@@ -199,73 +264,8 @@ else {
   module.exports = MagiConsole;
 }
 
-}).call(this,_dereq_("pBGvAp"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"pBGvAp":2,"wunderbits.core/public/WBClass":5,"wunderbits.core/public/lib/assert":13,"wunderbits.core/public/lib/functions":23,"wunderbits.core/public/lib/toArray":29}],2:[function(_dereq_,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],3:[function(_dereq_,module,exports){
+}).call(this,_dereq_("Rdh0rp"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"Rdh0rp":1,"wunderbits.core/public/WBClass":5,"wunderbits.core/public/lib/assert":13,"wunderbits.core/public/lib/functions":23,"wunderbits.core/public/lib/toArray":29}],3:[function(_dereq_,module,exports){
 'use strict';
 
 var BaseEmitter = _dereq_('./WBEventEmitter').extend({
@@ -2835,7 +2835,7 @@ var IO = IOBase.extend({
 
 module.exports = IO;
 
-},{"../validators/SchemaValidator":110,"./IOBase":47,"magiconsole":1,"wunderbits.core":12}],47:[function(_dereq_,module,exports){
+},{"../validators/SchemaValidator":110,"./IOBase":47,"magiconsole":2,"wunderbits.core":12}],47:[function(_dereq_,module,exports){
 (function (global){
 'use strict';
 
@@ -3832,7 +3832,7 @@ var RestSocket = WBEventEmitter.extend({
 
 module.exports = RestSocket;
 
-},{"../deferreds/RestSocketRequestDeferred":42,"../helpers/PlatformHeaders":44,"../helpers/URL":45,"../validators/SchemaValidator":110,"../wunderbits/lib/SafeParse":112,"./io/WebSocket":52,"./mixins/RequestQueueMixin":53,"magiconsole":1,"wunderbits.core":12}],49:[function(_dereq_,module,exports){
+},{"../deferreds/RestSocketRequestDeferred":42,"../helpers/PlatformHeaders":44,"../helpers/URL":45,"../validators/SchemaValidator":110,"../wunderbits/lib/SafeParse":112,"./io/WebSocket":52,"./mixins/RequestQueueMixin":53,"magiconsole":2,"wunderbits.core":12}],49:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -4459,7 +4459,7 @@ var WebSocketClass = WBEventEmitter.extend({
 
 module.exports = WebSocketClass;
 
-},{"../../helpers/URL":45,"../../wunderbits/lib/bindAll":113,"./NativeWebSocket":50,"magiconsole":1,"wunderbits.core":12}],53:[function(_dereq_,module,exports){
+},{"../../helpers/URL":45,"../../wunderbits/lib/bindAll":113,"./NativeWebSocket":50,"magiconsole":2,"wunderbits.core":12}],53:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -5173,7 +5173,7 @@ module.exports = AuthenticatedService.extend({
   }
 });
 
-},{"./AuthenticatedService":73,"magiconsole":1,"wunderbits.core":12}],78:[function(_dereq_,module,exports){
+},{"./AuthenticatedService":73,"magiconsole":2,"wunderbits.core":12}],78:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -5339,7 +5339,7 @@ module.exports = AuthenticatedService.extend({
     }
 });
 
-},{"./AuthenticatedService":73,"./Memberships":84,"magiconsole":1,"wunderbits.core":12}],79:[function(_dereq_,module,exports){
+},{"./AuthenticatedService":73,"./Memberships":84,"magiconsole":2,"wunderbits.core":12}],79:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -5630,7 +5630,7 @@ module.exports = AuthenticatedService.extend({
   }
 });
 
-},{"./AuthenticatedService":73,"./Memberships":84,"magiconsole":1,"wunderbits.core":12}],84:[function(_dereq_,module,exports){
+},{"./AuthenticatedService":73,"./Memberships":84,"magiconsole":2,"wunderbits.core":12}],84:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -5848,7 +5848,7 @@ module.exports = BaseServiceMixin.extend({
   }
 });
 
-},{"./BaseServiceMixin":85,"magiconsole":1,"wunderbits.core":12}],87:[function(_dereq_,module,exports){
+},{"./BaseServiceMixin":85,"magiconsole":2,"wunderbits.core":12}],87:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -5900,7 +5900,7 @@ module.exports = WBMixin.extend({
   }
 });
 
-},{"../../helpers/URL":45,"magiconsole":1,"wunderbits.core":12}],88:[function(_dereq_,module,exports){
+},{"../../helpers/URL":45,"magiconsole":2,"wunderbits.core":12}],88:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -6087,7 +6087,7 @@ module.exports = BaseServiceMixin.extend({
   }
 });
 
-},{"./BaseServiceMixin":85,"magiconsole":1,"wunderbits.core":12}],90:[function(_dereq_,module,exports){
+},{"./BaseServiceMixin":85,"magiconsole":2,"wunderbits.core":12}],90:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -6989,7 +6989,7 @@ module.exports = AuthenticatedService.extend({
   }
 });
 
-},{"./AuthenticatedService":73,"magiconsole":1,"wunderbits.core":12}],100:[function(_dereq_,module,exports){
+},{"./AuthenticatedService":73,"magiconsole":2,"wunderbits.core":12}],100:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -7304,7 +7304,7 @@ module.exports = AuthenticatedService.extend({
   }
 });
 
-},{"./AuthenticatedService":73,"magiconsole":1,"wunderbits.core":12}],104:[function(_dereq_,module,exports){
+},{"./AuthenticatedService":73,"magiconsole":2,"wunderbits.core":12}],104:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -7542,7 +7542,7 @@ module.exports = AuthenticatedService.extend({
   }
 });
 
-},{"./AuthenticatedService":73,"magiconsole":1,"wunderbits.core":12}],108:[function(_dereq_,module,exports){
+},{"./AuthenticatedService":73,"magiconsole":2,"wunderbits.core":12}],108:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -7771,7 +7771,7 @@ var SchemaValidator = WBSingleton.extend({
 
 module.exports = SchemaValidator;
 
-},{"../schemas":71,"magiconsole":1,"wunderbits.core":12}],111:[function(_dereq_,module,exports){
+},{"../schemas":71,"magiconsole":2,"wunderbits.core":12}],111:[function(_dereq_,module,exports){
 (function (global){
 'use strict';
 
@@ -7885,7 +7885,7 @@ var SafeParse = WBSingleton.extend({
 });
 
 module.exports = SafeParse;
-},{"magiconsole":1,"wunderbits.core":12}],113:[function(_dereq_,module,exports){
+},{"magiconsole":2,"wunderbits.core":12}],113:[function(_dereq_,module,exports){
 'use strict';
 
 var core = _dereq_('wunderbits.core');
@@ -8335,7 +8335,7 @@ var Wunderlist = WBEventEmitter.extend({
 
 module.exports = Wunderlist;
 
-},{"../config/default":40,"../helpers/PlatformHeaders":44,"../io/IO":46,"../io/RestSocket":48,"../io/io/AjaxTransport":49,"../models/ApplicationState":54,"../services":109,"magiconsole":1,"wunderbits.core":12}]},{},[114])
+},{"../config/default":40,"../helpers/PlatformHeaders":44,"../io/IO":46,"../io/RestSocket":48,"../io/io/AjaxTransport":49,"../models/ApplicationState":54,"../services":109,"magiconsole":2,"wunderbits.core":12}]},{},[114])
 //@ sourceMappingURL=wunderlist.sdk.map
 (114)
 });
