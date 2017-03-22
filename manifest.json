@@ -2,18 +2,22 @@
   "applications": {
     "gecko": {
       "id": "@wlisttab",
-      "strict_min_version": "42.0"
+      "strict_min_version": "54.0a1"
     }
   },
   "manifest_version": 2,
   "name": "Wunderlist New Tab",
-  "version": "2.2.9",
+  "version": "2.3.0",
 
   "description":
     "This addon would replace your boring new-tab page to a good-designed wunderlist page.",
   "homepage_url": "https://github.com/wildskyf/fx-wunderlist-new-tab",
   "icons": {
     "48": "icons/border-48.png"
+  },
+
+  "chrome_url_overrides": {
+    "newtab": "data/index.html"
   },
 
   "permissions": [

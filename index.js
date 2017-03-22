@@ -34,30 +34,6 @@ function removeToken() {
     });
 }
 
-var replaceNewTabPage = tab => {
-	local.get().then( data => {
-		if (tab.url == "about:newtab") {
-			/*
-			browser.tabs.update(
-				tab.id,
-				{ url:"data/index.html" }
-			)
-			*/
-			browser.tabs.remove(tab.id);
-			if (data.token) {
-				browser.tabs.create({
-					url:"data/index.html"
-				});
-			}
-			else {
-				login();
-			}
-		}
-	});
-};
-
-browser.tabs.onCreated.addListener(replaceNewTabPage);
-
 var globalObjects = {
     'addPanel': undefined,
     'addButton': undefined
