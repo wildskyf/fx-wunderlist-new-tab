@@ -7,7 +7,7 @@
   },
   "manifest_version": 2,
   "name": "Wunderlist New Tab",
-  "version": "2.3.0",
+  "version": "2.4.0",
 
   "description":
     "This addon would replace your boring new-tab page to a good-designed wunderlist page.",
@@ -22,7 +22,7 @@
 
   "permissions": [
       "*://a.wunderlist.com/*", "*://socket.wunderlist.com:8443/*",
-      "tabs", "storage"
+      "tabs", "storage", "identity"
   ],
 
   "background": {
