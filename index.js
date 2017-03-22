@@ -44,7 +44,7 @@ var authorize = () => {
 	});
 }
 
-var login() => authorize().then(validate);
+var login = () => authorize().then(validate);
 
 local.get().then( data => {
 	wAccessToken = data.token || login();
