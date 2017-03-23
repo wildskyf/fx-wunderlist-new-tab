@@ -1,6 +1,8 @@
-# Wlist-new-tab
+# Wunderlist-newtab
 
-This is a new-tab addon for firefox, which is inspired by [Wunderlist-new-tab on Chrome](https://chrome.google.com/webstore/detail/wunderlist-new-tab/fgikemaeelgbhjnhnnahcpkjpafaeion)
+This is a new-tab add-on for firefox, which is inspired by [Wunderlist-new-tab on Chrome](https://chrome.google.com/webstore/detail/wunderlist-new-tab/fgikemaeelgbhjnhnnahcpkjpafaeion)
+
+![screendhot](/screendhot.png)
 
 # What can this addon do?
 
@@ -17,15 +19,15 @@ anything the app on chrome can do.
 - add new task
 - set task as done
 - view all list
+- use background which is chosen by user
 
 ### not yet
 - localstorage
-- use background which is chosen by user
 - ... something which not not list in the above supported list
 
 # Claim
 
-`data/js/vendor/wunderlist.sdk.min.js` is a sdk from [wunderlist/wunderlist.js](https://github.com/wunderlist/wunderlist.js)
+`data/js/vendor/wunderlist.sdk.js` is a sdk from [wunderlist/wunderlist.js](https://github.com/wunderlist/wunderlist.js)
 All right are reserved by wunderlist.
 
 # License
