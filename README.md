@@ -2,7 +2,7 @@
 
 This is a new-tab add-on for firefox, which is inspired by [Wunderlist-new-tab on Chrome](https://chrome.google.com/webstore/detail/wunderlist-new-tab/fgikemaeelgbhjnhnnahcpkjpafaeion)
 
-![screendhot](/screendhot.png)
+![screenshot](/screenshot.png)
 
 # What can this addon do?
 
